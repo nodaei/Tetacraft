@@ -13,6 +13,7 @@ public class Main{
     public int height = 600;
 
     public Mesh mesh = new Mesh();
+    public Shader shader = new Shader();
 
     public void run() {
         init();
@@ -39,6 +40,18 @@ public class Main{
         glEnable(GL_DEPTH_TEST);
         glViewport(0, 0, width, height);
 
+        shader.init();
+        shader.setProjection(width, height);
+
+        glfwSetFramebufferSizeCallback(window, (win, w, h) -> {
+            if (w <= 0 || h <= 0) return;
+
+            this.width = w;
+            this.height = h;
+            glViewport(0, 0, w, h);
+            shader.setProjection(w, h);
+        });
+
         mesh.init();
     }
 
@@ -47,7 +60,7 @@ public class Main{
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 
-            mesh.render();
+            mesh.render(shader);
 
             glfwSwapBuffers(window);
             glfwPollEvents();

@@ -12,12 +12,15 @@ import static org.lwjgl.opengl.GL20.*;
 public class Shader {
     public int shaderProgram;
 
+    public float FOV = 70.0f;
+
     public Camera camera = new Camera();
+    public Matrix4f projection = new Matrix4f();
 
     public String vertexShaderID;
     public String fragShaderID;
 
-    public void create() {
+    public void init() {
         vertexShaderID = readFile("/assets/tetacraft/shaders/base.vert");
         fragShaderID = readFile("/assets/tetacraft/shaders/base.frag");
 
@@ -41,24 +44,21 @@ public class Shader {
         }
     }
 
-    public void render() {
+    public void render(Matrix4f model) {
         glUseProgram(shaderProgram);
-
-        Matrix4f projection = new Matrix4f()
-                .perspective(
-                        (float) Math.toRadians(70.0f),
-                        (float) 800 / 600,
-                        0.1f,
-                        Float.POSITIVE_INFINITY
-                );
-
         Matrix4f view = camera.getViewMatrix();
 
+        int modelLoc = glGetUniformLocation(shaderProgram, "model");
         int viewLoc = glGetUniformLocation(shaderProgram, "view");
         int projLoc = glGetUniformLocation(shaderProgram, "projection");
+
         FloatBuffer buffer = MemoryUtil.memAllocFloat(16);
 
         try {
+            model.get(buffer);
+            glUniformMatrix4fv(modelLoc, false, buffer);
+            buffer.clear();
+
             view.get(buffer);
             glUniformMatrix4fv(viewLoc, false, buffer);
             buffer.clear();
@@ -68,6 +68,15 @@ public class Shader {
         } finally {
             MemoryUtil.memFree(buffer);
         }
+    }
+
+    public void setProjection(int width, int height) {
+        projection.identity().perspective(
+                (float) Math.toRadians(FOV),
+                (float) width / height,
+                0.1f,
+                Float.POSITIVE_INFINITY
+        );
     }
 
     public String readFile(String path) {
