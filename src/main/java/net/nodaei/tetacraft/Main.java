@@ -16,6 +16,8 @@ public class Main{
         init();
         loop();
 
+        mesh.delete();
+
         glfwDestroyWindow(window);
         glfwTerminate();
     }
