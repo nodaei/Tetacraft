@@ -1,6 +1,10 @@
 package net.nodaei.tetacraft;
 
+import org.joml.Matrix4f;
+import org.lwjgl.system.MemoryUtil;
+
 import java.io.InputStream;
+import java.nio.FloatBuffer;
 import java.nio.charset.StandardCharsets;
 
 import static org.lwjgl.opengl.GL20.*;
@@ -8,10 +12,12 @@ import static org.lwjgl.opengl.GL20.*;
 public class Shader {
     public int shaderProgram;
 
+    public Camera camera = new Camera();
+
     public String vertexShaderID;
     public String fragShaderID;
 
-    public int create() {
+    public void create() {
         vertexShaderID = readFile("/assets/tetacraft/shaders/base.vert");
         fragShaderID = readFile("/assets/tetacraft/shaders/base.frag");
 
@@ -33,8 +39,35 @@ public class Shader {
         if (glGetProgrami(shaderProgram, GL_LINK_STATUS) == GL_FALSE) {
             throw new RuntimeException(glGetProgramInfoLog(shaderProgram));
         }
+    }
 
-        return shaderProgram;
+    public void render() {
+        glUseProgram(shaderProgram);
+
+        Matrix4f projection = new Matrix4f()
+                .perspective(
+                        (float) Math.toRadians(70.0f),
+                        (float) 800 / 600,
+                        0.1f,
+                        Float.POSITIVE_INFINITY
+                );
+
+        Matrix4f view = camera.getViewMatrix();
+
+        int viewLoc = glGetUniformLocation(shaderProgram, "view");
+        int projLoc = glGetUniformLocation(shaderProgram, "projection");
+        FloatBuffer buffer = MemoryUtil.memAllocFloat(16);
+
+        try {
+            view.get(buffer);
+            glUniformMatrix4fv(viewLoc, false, buffer);
+            buffer.clear();
+
+            projection.get(buffer);
+            glUniformMatrix4fv(projLoc, false, buffer);
+        } finally {
+            MemoryUtil.memFree(buffer);
+        }
     }
 
     public String readFile(String path) {

@@ -1,6 +1,5 @@
 package net.nodaei.tetacraft;
 
-import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -14,7 +13,6 @@ public class Main{
     public int height = 600;
 
     public Mesh mesh = new Mesh();
-    public Camera camera = new Camera();
 
     public void run() {
         init();
@@ -49,17 +47,7 @@ public class Main{
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 
-            Matrix4f projection = new Matrix4f()
-                    .perspective(
-                            (float) Math.toRadians(70.0f),
-                            (float) width / height,
-                            0.1f,
-                            Float.POSITIVE_INFINITY
-                    );
-
-            Matrix4f view = camera.getViewMatrix();
-
-            mesh.render(view, projection);
+            mesh.render();
 
             glfwSwapBuffers(window);
             glfwPollEvents();

@@ -1,6 +1,5 @@
 package net.nodaei.tetacraft;
 
-import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
@@ -10,7 +9,8 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class Mesh {
     private int vaoId;
-    private int shaderProgram;
+
+    public Shader shader = new Shader();
 
     private FloatBuffer posBuffer;
     private IntBuffer idxBuffer;
@@ -45,28 +45,18 @@ public class Mesh {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboId);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, idxBuffer, GL_STATIC_DRAW);
 
-        shaderProgram = new Shader().create();
+        shader.create();
+
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
     }
 
-    public void render(Matrix4f view, Matrix4f projection) {
-        glUseProgram(shaderProgram);
-
-        int viewLoc = glGetUniformLocation(shaderProgram, "view");
-        int projLoc = glGetUniformLocation(shaderProgram, "projection");
-        FloatBuffer buffer = MemoryUtil.memAllocFloat(16);
-
-        view.get(buffer);
-        glUniformMatrix4fv(viewLoc, false, buffer);
-        buffer.clear();
-
-        projection.get(buffer);
-        glUniformMatrix4fv(projLoc, false, buffer);
-        MemoryUtil.memFree(buffer);
+    public void render() {
+        shader.render();
 
         glBindVertexArray(vaoId);
         glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
+        glUseProgram(0);
     }
 
     public void delete() {
