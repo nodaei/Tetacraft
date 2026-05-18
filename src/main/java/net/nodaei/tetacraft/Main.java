@@ -1,16 +1,20 @@
 package net.nodaei.tetacraft;
 
+import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11C.*;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Main{
     public long window;
 
-    public Mesh mesh;
-    public Shader shader;
+    public int width = 800;
+    public int height = 600;
+
+    public Mesh mesh = new Mesh();
+    public Camera camera = new Camera();
 
     public void run() {
         init();
@@ -26,18 +30,16 @@ public class Main{
         if (!glfwInit()) throw new IllegalStateException("Unable to initiate GLFW");
 
         window = glfwCreateWindow(
-                800, 600,
-                "Title",
+                width, height,
+                "Vortex",
                 NULL, NULL
         );
 
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
 
-        mesh = new Mesh();
-        shader = new Shader();
-
-        shader.readFile("/assets/tetacraft/shaders/base.vert");
+        glEnable(GL_DEPTH_TEST);
+        glViewport(0, 0, width, height);
 
         mesh.init();
     }
@@ -45,9 +47,19 @@ public class Main{
     public void loop() {
         while (!glfwWindowShouldClose(window)) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            glClearColor(0.05f, 0.05f, 0.05f, 0.05f);
+            glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 
-            mesh.render();
+            Matrix4f projection = new Matrix4f()
+                    .perspective(
+                            (float) Math.toRadians(70.0f),
+                            (float) width / height,
+                            0.1f,
+                            Float.POSITIVE_INFINITY
+                    );
+
+            Matrix4f view = camera.getViewMatrix();
+
+            mesh.render(view, projection);
 
             glfwSwapBuffers(window);
             glfwPollEvents();
