@@ -14,8 +14,13 @@ public class Shader {
 
     public float FOV = 70.0f;
 
-    public Camera camera = new Camera();
+    public Matrix4f model = new Matrix4f();
+    public Matrix4f view = new Matrix4f();
     public Matrix4f projection = new Matrix4f();
+
+    public int modelLoc;
+    public int viewLoc;
+    public int projLoc;
 
     public String vertexShaderID;
     public String fragShaderID;
@@ -39,18 +44,19 @@ public class Shader {
 
         glLinkProgram(shaderProgram);
 
+        modelLoc = glGetUniformLocation(shaderProgram, "model");
+        viewLoc = glGetUniformLocation(shaderProgram, "view");
+        projLoc = glGetUniformLocation(shaderProgram, "projection");
+
         if (glGetProgrami(shaderProgram, GL_LINK_STATUS) == GL_FALSE) {
             throw new RuntimeException(glGetProgramInfoLog(shaderProgram));
         }
     }
 
-    public void render(Matrix4f model) {
+    public void render(Camera camera) {
         glUseProgram(shaderProgram);
-        Matrix4f view = camera.getViewMatrix();
 
-        int modelLoc = glGetUniformLocation(shaderProgram, "model");
-        int viewLoc = glGetUniformLocation(shaderProgram, "view");
-        int projLoc = glGetUniformLocation(shaderProgram, "projection");
+        view = camera.getViewMatrix();
 
         FloatBuffer buffer = MemoryUtil.memAllocFloat(16);
 

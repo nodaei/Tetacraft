@@ -12,8 +12,12 @@ public class Main{
     public int width = 800;
     public int height = 600;
 
+    public float deltaTime;
+    public float lastFrame;
+
     public Mesh mesh = new Mesh();
     public Shader shader = new Shader();
+    public Camera camera = new Camera();
 
     public void run() {
         init();
@@ -26,8 +30,10 @@ public class Main{
     }
 
     public void init() {
+        // we check first if glfw is ready, if not, it stops the program.
         if (!glfwInit()) throw new IllegalStateException("Unable to initiate GLFW");
 
+        // we create the window
         window = glfwCreateWindow(
                 width, height,
                 "Vortex",
@@ -60,7 +66,14 @@ public class Main{
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 
-            mesh.render(shader);
+            // delta time logic so the movement is normalized independent of the fps
+            float currentFrame = (float) glfwGetTime();
+            deltaTime = currentFrame - lastFrame;
+            lastFrame = currentFrame;
+
+            camera.update(window, deltaTime);
+            shader.render(camera);
+            mesh.render();
 
             glfwSwapBuffers(window);
             glfwPollEvents();

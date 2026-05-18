@@ -1,6 +1,5 @@
 package net.nodaei.tetacraft;
 
-import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
@@ -10,8 +9,6 @@ import static org.lwjgl.opengl.GL30.*;
 
 public class Mesh {
     private int vaoId;
-
-    public Matrix4f modelMatrix = new Matrix4f();
 
     private FloatBuffer posBuffer;
     private IntBuffer idxBuffer;
@@ -49,8 +46,7 @@ public class Mesh {
         glBindVertexArray(0);
     }
 
-    public void render(Shader shader) {
-        shader.render(modelMatrix);
+    public void render() {
         glBindVertexArray(vaoId);
         glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
     }
