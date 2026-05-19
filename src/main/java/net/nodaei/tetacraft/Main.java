@@ -3,6 +3,7 @@ package net.nodaei.tetacraft;
 import net.nodaei.tetacraft.Render.Camera;
 import net.nodaei.tetacraft.Render.Mesh;
 import net.nodaei.tetacraft.Render.Shader;
+import net.nodaei.tetacraft.Render.Texture;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -21,12 +22,15 @@ public class Main{
     public Mesh mesh = new Mesh();
     public Shader shader = new Shader();
     public Camera camera = new Camera();
+    public Texture texture;
 
     public void run() {
         init();
         loop();
 
+        // cleanup of GPU before exit
         mesh.delete();
+        texture.delete();
 
         glfwDestroyWindow(window);
         glfwTerminate();
@@ -43,6 +47,7 @@ public class Main{
                 NULL, NULL
         );
 
+        // nothing GL-related before this line.
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
 
@@ -59,10 +64,9 @@ public class Main{
         shader.init();
         shader.setProjection(width, height);
 
-        // detects and changes the window upon changing sizes.
+        // Resize callback; keeps projection and viewport in sync with the window
         glfwSetFramebufferSizeCallback(window, (win, w, h) -> {
             if (w <= 0 || h <= 0) return;
-
             this.width = w;
             this.height = h;
             glViewport(0, 0, w, h);
@@ -70,19 +74,26 @@ public class Main{
         });
 
         mesh.init();
+        texture = new Texture(new String[]{
+                "src/main/resources/assets/tetacraft/textures/blocks/dirt.png"
+        });
     }
 
     public void loop() {
         while (!glfwWindowShouldClose(window)) {
+            // Clear color and depth each frame
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 
-            // delta time so movement speed isn't attached of the fps
+            // Delta time: time since last frame in seconds.
+            // it's used so the movement isn't affected by the fps
             float currentFrame = (float) glfwGetTime();
             deltaTime = currentFrame - lastFrame;
             lastFrame = currentFrame;
-
             camera.update(window, deltaTime);
+
+            // Bind texture to slot 0 before rendering
+            texture.bind(0);
             shader.render(camera);
             mesh.render();
 
