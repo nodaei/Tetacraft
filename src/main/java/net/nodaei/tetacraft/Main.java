@@ -51,6 +51,11 @@ public class Main{
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
 
+        // Culls the insides of the mesh.
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CCW);
+
         // disables the cursor as soon as the engine initializes.
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 

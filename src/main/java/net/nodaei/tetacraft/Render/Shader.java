@@ -36,7 +36,7 @@ public class Shader {
         glShaderSource(fragShader, fragmentSource);
         glCompileShader(fragShader);
         if (glGetShaderi(fragShader, GL_COMPILE_STATUS) == GL_FALSE)
-            throw new RuntimeException("Vertex shader error: " + glGetShaderInfoLog(fragShader));
+            throw new RuntimeException("Fragment shader error: " + glGetShaderInfoLog(fragShader));
 
         shaderProgram = glCreateProgram();
         glAttachShader(shaderProgram, vertexShader);

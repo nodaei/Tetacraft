@@ -34,6 +34,9 @@ public class Texture {
 
         int width = 0, height = 0;
 
+        // the texture first render upside down, this fixes it
+        stbi_set_flip_vertically_on_load(true);
+
         for (int i = 0; i < path.length; i++) {
             ByteBuffer image = stbi_load(path[i], w, h, ch, 4);
             if (image == null)
