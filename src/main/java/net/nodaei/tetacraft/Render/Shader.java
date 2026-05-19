@@ -1,11 +1,10 @@
 package net.nodaei.tetacraft.Render;
 
+import net.nodaei.tetacraft.Utils;
 import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryUtil;
 
-import java.io.InputStream;
 import java.nio.FloatBuffer;
-import java.nio.charset.StandardCharsets;
 
 import static org.lwjgl.opengl.GL20.*;
 
@@ -26,8 +25,8 @@ public class Shader {
     public String fragShaderID;
 
     public void init() {
-        vertexShaderID = readFile("/assets/tetacraft/shaders/base.vert");
-        fragShaderID = readFile("/assets/tetacraft/shaders/base.frag");
+        vertexShaderID = Utils.readFile("/assets/tetacraft/shaders/base.vert");
+        fragShaderID = Utils.readFile("/assets/tetacraft/shaders/base.frag");
 
         int vertexShader = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertexShader, vertexShaderID);
@@ -83,19 +82,5 @@ public class Shader {
                 0.1f,
                 Float.POSITIVE_INFINITY
         );
-    }
-
-    public String readFile(String path) {
-        try (InputStream stream = Shader.class.getResourceAsStream(path)) {
-            if (stream == null) throw new RuntimeException("Shader not found:" + path);
-
-            return new String(
-                    stream.readAllBytes(),
-                    StandardCharsets.UTF_8
-            );
-
-        } catch (Exception exception) {
-            throw new RuntimeException("Failed to load shader:" + path, exception);
-        }
     }
 }
