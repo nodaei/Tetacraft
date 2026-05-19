@@ -37,17 +37,17 @@ public class Main{
     }
 
     public void init() {
-        // check if glfw has been initialized correctly, return error if not.
+        // Checks if glfw has been initialized correctly, return error if not.
         if (!glfwInit()) throw new IllegalStateException("Unable to initiate GLFW");
 
-        // creates window at launch
+        // Creates window at launch.
         window = glfwCreateWindow(
                 width, height,
                 "Vortex",
                 NULL, NULL
         );
 
-        // nothing GL-related before this line.
+        // Nothing GL-related before this line.
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
 
@@ -56,7 +56,8 @@ public class Main{
         glCullFace(GL_BACK);
         glFrontFace(GL_CCW);
 
-        // disables the cursor as soon as the engine initializes.
+        // Disables the cursor as soon as the engine initializes.
+        // Can be unlocked later by pressing ESC
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         // enables or disables v-sync.

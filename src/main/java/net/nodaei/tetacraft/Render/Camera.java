@@ -83,12 +83,12 @@ public class Camera {
         }
 
         // up and down
-        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-            position.y += moveSpeed; // upward
+        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) { // upward
+            position.y += moveSpeed;
         }
 
-        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
-            position.y -= moveSpeed; // downward
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) { // downward
+            position.y -= moveSpeed;
         }
     }
 

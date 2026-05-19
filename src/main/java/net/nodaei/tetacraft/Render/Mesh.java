@@ -86,16 +86,20 @@ public class Mesh {
         // (x, y, z, u, v, layer)
         int stride = 6 * Float.BYTES;
 
-        // Assigns data to the shader
+        // Sends the desired data to the shader:
+
         // x, y, z
         glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0);
         glEnableVertexAttribArray(0);
+
         // u, v
         glVertexAttribPointer(1, 2, GL_FLOAT, false, stride, 3L * Float.BYTES);
         glEnableVertexAttribArray(1);
+
         // layer
         glVertexAttribPointer(2, 1, GL_FLOAT, false, stride, 5L * Float.BYTES);
         glEnableVertexAttribArray(2);
+
 
         // cleaning
         glBindBuffer(GL_ARRAY_BUFFER, 0);
