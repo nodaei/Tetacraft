@@ -33,10 +33,10 @@ public class Main{
     }
 
     public void init() {
-        // we check first if glfw is ready, if not, it stops the program.
+        // check if glfw has been initialized correctly, return error if not.
         if (!glfwInit()) throw new IllegalStateException("Unable to initiate GLFW");
 
-        // we create the window
+        // creates window at launch
         window = glfwCreateWindow(
                 width, height,
                 "Vortex",
@@ -49,12 +49,17 @@ public class Main{
         // disables the cursor as soon as the engine initializes.
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
+        // enables or disables v-sync.
+        // 1 = on, 0 = off, -1 = adaptive (only if supported)
+        glfwSwapInterval(1);
+
         glEnable(GL_DEPTH_TEST);
         glViewport(0, 0, width, height);
 
         shader.init();
         shader.setProjection(width, height);
 
+        // detects and changes the window upon changing sizes.
         glfwSetFramebufferSizeCallback(window, (win, w, h) -> {
             if (w <= 0 || h <= 0) return;
 
@@ -72,7 +77,7 @@ public class Main{
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 
-            // delta time logic so the movement is normalized independent of the fps
+            // delta time so movement speed isn't attached of the fps
             float currentFrame = (float) glfwGetTime();
             deltaTime = currentFrame - lastFrame;
             lastFrame = currentFrame;

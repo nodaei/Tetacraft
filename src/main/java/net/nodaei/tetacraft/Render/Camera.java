@@ -6,14 +6,17 @@ import org.joml.Vector3f;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Camera {
+    // camera movement
     public Vector3f position = new Vector3f(0,0,1);
-    public double lastMouseX, lastMouseY;
-    public float pitch, yaw;
+    private double lastMouseX, lastMouseY;
+    private float pitch, yaw;
 
-    public boolean firstMouse = true;
-    public boolean mouseLocked = true;
-    public boolean escWasPressed = false;
+    // mouse lock logic boolean's
+    private boolean firstMouse = true;
+    private boolean mouseLocked = true;
+    private boolean escWasPressed = false;
 
+    // speed variables
     public float speed = 5.0f;
     public float mouseSensitivity = 0.5f;
 
@@ -23,6 +26,7 @@ public class Camera {
         updateMovement(window, deltaTime);
     }
 
+    // connects the mouse to the camera's yaw and pitch
     public void updateCamera(long window) {
         double[] mouseX = new double[1];
         double[] mouseY = new double[1];
@@ -80,7 +84,7 @@ public class Camera {
 
         // up and down
         if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-            position.y += moveSpeed; // downward
+            position.y += moveSpeed; // upward
         }
 
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
@@ -88,6 +92,7 @@ public class Camera {
         }
     }
 
+    // toggles mouse lock on ESC
     public void updateMouseLock(long window) {
         boolean escPressed = glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS;
 
@@ -105,6 +110,7 @@ public class Camera {
         escWasPressed = escPressed;
     }
 
+    // getter that provides the view matrix to the shader, as of now.
     public Matrix4f getViewMatrix() {
         return new Matrix4f()
                 .rotateX((float) Math.toRadians(pitch))

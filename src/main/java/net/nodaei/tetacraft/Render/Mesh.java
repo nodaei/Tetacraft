@@ -8,11 +8,14 @@ import java.nio.IntBuffer;
 import static org.lwjgl.opengl.GL30.*;
 
 public class Mesh {
+    // idk
     private int vaoId;
 
+    // idk
     private FloatBuffer posBuffer;
     private IntBuffer idxBuffer;
 
+    // idk
     private final float[] vertices = {
             -0.5f, 0.5f, 0.0f,
             -0.5f, -0.5f, 0.0f,
@@ -20,6 +23,7 @@ public class Mesh {
             0.5f, 0.5f, 0.0f
     };
 
+    // the order of which the vertices are getting rendered.
     private final int[] indices = {
             0, 1, 3, //first triangle
             3, 1, 2 //second triangle
