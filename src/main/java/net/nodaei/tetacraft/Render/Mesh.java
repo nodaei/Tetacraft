@@ -1,4 +1,4 @@
-package net.nodaei.tetacraft;
+package net.nodaei.tetacraft.Render;
 
 import org.lwjgl.system.MemoryUtil;
 

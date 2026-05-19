@@ -1,5 +1,8 @@
 package net.nodaei.tetacraft;
 
+import net.nodaei.tetacraft.Render.Camera;
+import net.nodaei.tetacraft.Render.Mesh;
+import net.nodaei.tetacraft.Render.Shader;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -42,6 +45,9 @@ public class Main{
 
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
+
+        // disables the cursor as soon as the engine initializes.
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
         glEnable(GL_DEPTH_TEST);
         glViewport(0, 0, width, height);

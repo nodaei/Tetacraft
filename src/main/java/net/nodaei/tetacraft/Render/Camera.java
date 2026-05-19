@@ -1,4 +1,4 @@
-package net.nodaei.tetacraft;
+package net.nodaei.tetacraft.Render;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -7,12 +7,46 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class Camera {
     public Vector3f position = new Vector3f(0,0,1);
+    public double lastMouseX, lastMouseY;
     public float pitch, yaw;
 
+    public boolean firstMouse = true;
+    public boolean mouseLocked = true;
+    public boolean escWasPressed = false;
+
     public float speed = 5.0f;
+    public float mouseSensitivity = 0.5f;
 
     public void update(long window, float deltaTime) {
+        updateMouseLock(window);
+        if (mouseLocked) updateCamera(window);
         updateMovement(window, deltaTime);
+    }
+
+    public void updateCamera(long window) {
+        double[] mouseX = new double[1];
+        double[] mouseY = new double[1];
+
+        glfwGetCursorPos(window, mouseX, mouseY);
+
+        if (firstMouse) {
+            lastMouseX = mouseX[0];
+            lastMouseY = mouseY[0];
+            firstMouse = false;
+            return;
+        }
+
+        float deltaX = (float) (mouseX[0] - lastMouseX);
+        float deltaY = (float) (mouseY[0] - lastMouseY);
+
+        lastMouseX = mouseX[0];
+        lastMouseY = mouseY[0];
+
+        yaw += deltaX * mouseSensitivity;
+        pitch += deltaY * mouseSensitivity;
+
+        if (pitch > 89.0f) pitch = 89.0f;
+        if (pitch < -89.0f) pitch = -89.0f;
     }
 
     // instead of moving the camera, we're moving the world.
@@ -52,23 +86,23 @@ public class Camera {
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
             position.y -= moveSpeed; // downward
         }
+    }
 
-        // Camera rotation; change later to use mouse.
-        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
-            pitch -= moveSpeed * 50;
+    public void updateMouseLock(long window) {
+        boolean escPressed = glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS;
+
+        if (escPressed && !escWasPressed) {
+            mouseLocked = !mouseLocked;
+            firstMouse = true;
+
+            glfwSetInputMode(
+                    window,
+                    GLFW_CURSOR,
+                    mouseLocked ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL
+            );
         }
 
-        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-            pitch += moveSpeed * 50;
-        }
-
-        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-            yaw -= moveSpeed * 50;
-        }
-
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-            yaw += moveSpeed * 50;
-        }
+        escWasPressed = escPressed;
     }
 
     public Matrix4f getViewMatrix() {
